@@ -1,19 +1,25 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"net/http"
-	"bufio"
 	"io/ioutil"
+	"net/http"
 )
 
 func main() {
+	// get the data
 	resp, err := http.Get("https://api.github.com/users/kinvolk/events")
-
 	if err != nil {
+		fmt.Printf("error getting the data from github", err)
 		return
 	}
 
-	// Print the content
-	fmt.Printf("%s", resp)
+	// output data to the file
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(resp.Body)
+	err = ioutil.WriteFile("myfile.json", buf.Bytes(), 0666)
+	if err != nil {
+		return
+	}
 }
