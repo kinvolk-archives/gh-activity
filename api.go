@@ -14,7 +14,6 @@ func main() {
 		return
 	}
 
+	// Print the content
 	fmt.Printf("%s", resp)
-
-
 }
