@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+
+	"github.com/spf13/cobra"
 )
 
 type Actor struct {
@@ -70,17 +73,44 @@ type Activity struct {
 	CreatedAt string `json:"created_at"`
 }
 
-func main() {
-	e, err := getEvents("kinvolk")
-	if err != nil {
-		fmt.Printf("problem getting events: %v", err)
-		return
-	}
+var (
+	org        string
+	outputfile string
 
-	err = writeActivity("event.json", e)
-	if err != nil {
-		fmt.Printf("problem writing the activities to file: %v", err)
-		return
+	Cmd = &cobra.Command{
+		Use:   "gh-activity --org=[organization]",
+		Short: "Get Github activity for a given organization.",
+		Long:  ``,
+		Run: func(cmd *cobra.Command, args []string) {
+			if org == "" {
+				fmt.Println("organization is not set")
+				cmd.Help()
+				return
+			}
+			e, err := getEvents(org)
+			if err != nil {
+				fmt.Printf("problem getting events: %v", err)
+				return
+			}
+
+			err = writeActivity(outputfile, e)
+			if err != nil {
+				fmt.Printf("problem writing the activities to file: %v", err)
+				return
+			}
+		},
+	}
+)
+
+func init() {
+	Cmd.PersistentFlags().StringVar(&org, "org", "", "Github organization")
+	Cmd.PersistentFlags().StringVar(&outputfile, "out", "activity.json", "file to save activities")
+}
+
+func main() {
+	if err := Cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
 	}
 }
 
