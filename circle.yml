@@ -1,0 +1,17 @@
+deployment:
+  hub:
+    branch: master
+    commands:
+      - >
+        test -z "${DOCKER_USER}" || (
+          docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS &&
+          docker push ${DOCKER_ORGANIZATION:-$DOCKER_USER}/gh-activity
+        )
+  hub-dev:
+    branch: /^((?!master).)*$/  # not the master branch
+    commands:
+      - >
+        test -z "${DEPLOY_BRANCH}" || test -z "${DOCKER_USER}" || (
+          docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS &&
+          docker push ${DOCKER_ORGANIZATION:-$DOCKER_USER}/gh-activity:${CIRCLE_BRANCH//\//-}
+        )
