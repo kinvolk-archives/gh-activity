@@ -83,8 +83,7 @@ func main() {
 
 func getContributors(org string, repo string) ([]Contributor, error) {
 	//get the data
-	fmt.Printf("org=%q repo=%q\n", org, repo)
-	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/kinvolk/%s/contributors", repo))
+	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s/contributors", org, repo))
 	if err != nil {
 		return nil, fmt.Errorf("Error getting the data from github: %v", err)
 	}
