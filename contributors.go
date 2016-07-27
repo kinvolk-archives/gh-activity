@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/spf13/cobra"
 )
 
 type Contributor struct {
